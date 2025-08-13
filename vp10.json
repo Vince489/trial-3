@@ -25,7 +25,7 @@
       "id": "destinationSuggester",
       "name": "Destination Suggestion Agent",
       "description": "Analyzes detailed traveler preferences to suggest creative, suitable trip ideas (domestic or international).",
-      "role": "You are a highly creative travel planner. Based on the provided 'travelerPreferences' JSON object, generate 3-5 distinct vacation ideas. For each idea, suggest a specific destination and provide a brief overview of why it's a good fit. Use the 'webSearch' tool to get information. Your output MUST be a JSON array of objects, each containing 'destinationName', 'justification', and 'briefOverview'.",
+      "role": "You are a highly creative travel planner. Based on the provided 'travelerPreferences' JSON object, generate 3-5 distinct vacation ideas. For each idea, suggest a specific destination and provide a brief overview of why it's a good fit. Use the 'webSearch' tool to get information. Your output MUST be a JSON array of objects, each containing 'destinationName', 'justification', and 'briefOverview'. DO NOT provide an itinerary or any other information beyond the requested JSON array.",
       "goals": [
         "Brainstorm and identify destinations that align with input preferences.",
         "Use the search tool to find and validate information about potential destinations.",
@@ -46,11 +46,11 @@
       "id": "destinationResearcher",
       "name": "Destination Research Agent",
       "description": "Researches a specific destination based on preferences",
-      "role": "You are a destination expert. You will receive traveler preferences and a chosen destination. Research the destination using the 'webSearch' tool and provide a detailed analysis.",
+      "role": "You are a destination expert. You will receive traveler preferences, a chosen destination, and the departure location. Research the destination using the 'webSearch' tool and provide a detailed analysis. Your output MUST be a JSON object with the following structure: { \"weather\": \"description of weather\", \"transportation\": \"transportation options from departure location\", \"attractions\": [\"list\", \"of\", \"attractions\"], \"accommodationAreas\": [\"list\", \"of\", \"recommended\", \"areas\"], \"localFoodOptions\": [\"list\", \"of\", \"food\", \"options\"] }",
       "goals": [
         "Research the provided destination using the search tool",
         "Gather comprehensive information about the destination based on user preferences",
-        "Provide a detailed analysis of the destination"
+        "Provide a structured JSON output with specific information categories"
       ],
       "provider": "gemini",
       "llmConfig": {
@@ -66,11 +66,11 @@
       "id": "accommodationAgent",
       "name": "Accommodation Agent",
       "description": "Finds and evaluates lodging options",
-      "role": "You are an accommodation specialist. You will receive traveler preferences and destination research. Find accommodation options using the 'webSearch' tool and provide recommendations with pricing and amenities.",
+      "role": "You are an accommodation specialist. You will receive traveler preferences and destination research. Find accommodation options using the 'webSearch' tool and provide recommendations with pricing and amenities. Your output MUST be a JSON object with the following structure: { \"recommendations\": [{\"name\": \"accommodation name\", \"type\": \"type of accommodation\", \"priceRange\": \"price range\", \"amenities\": [\"list\", \"of\", \"amenities\"], \"location\": \"location description\", \"bookingInfo\": \"booking information\"}] }",
       "goals": [
         "Use search tool to find relevant accommodation information",
         "Analyze and filter options based on budget and preferences",
-        "Provide a list of suitable accommodation recommendations"
+        "Provide a structured JSON output with accommodation recommendations"
       ],
       "provider": "gemini",
       "llmConfig": {
@@ -86,11 +86,11 @@
       "id": "transportAgent",
       "name": "Transportation Agent",
       "description": "Finds and evaluates transportation options",
-      "role": "You are a transportation specialist. You will receive traveler preferences and destination research. Find transportation options using the 'webSearch' tool and provide a summary of options, costs, and logistics.",
+      "role": "You are a transportation specialist. You will receive traveler preferences, destination research, and the departure location. Find transportation options using the 'webSearch' tool and provide a summary of options, costs, and logistics. Your output MUST be a JSON object with the following structure: { \"flights\": [{\"departure\": \"departure info\", \"return\": \"return info\", \"price\": \"price\", \"bookingInfo\": \"booking info\"}], \"localTransportation\": [{\"type\": \"transport type\", \"cost\": \"cost\", \"details\": \"details\"}] }",
       "goals": [
         "Find and analyze flight information for the specified dates and locations",
         "Research local transportation options (car rental, public transit)",
-        "Provide a comprehensive overview of transportation costs and logistics"
+        "Provide a structured JSON output with transportation options"
       ],
       "provider": "gemini",
       "llmConfig": {
@@ -106,11 +106,11 @@
       "id": "activityPlanner",
       "name": "Activity Planner Agent",
       "description": "Curates experiences based on interests",
-      "role": "You are an activity planner. You will receive traveler preferences and destination research. Find potential activities using the 'webSearch' tool and provide a list of curated activities with descriptions, pricing, and booking information.",
+      "role": "You are an activity planner. You will receive traveler preferences and destination research. Find potential activities using the 'webSearch' tool and provide a list of curated activities with descriptions, pricing, and booking information. Your output MUST be a JSON object with the following structure: { \"activities\": [{\"name\": \"activity name\", \"description\": \"activity description\", \"cost\": \"cost\", \"bookingInfo\": \"booking information\", \"location\": \"location\"}] }",
       "goals": [
         "Find and analyze activities based on user preferences",
         "Curate a list of activities with descriptions and costs",
-        "Provide booking information where applicable"
+        "Provide a structured JSON output with activity recommendations"
       ],
       "provider": "gemini",
       "llmConfig": {
@@ -126,11 +126,11 @@
       "id": "diningAgent",
       "name": "Dining Agent",
       "description": "Recommends dining experiences based on preferences",
-      "role": "You are a dining expert. You will receive traveler preferences and destination research. Find dining options using the 'webSearch' tool and provide a list of recommendations, including price range, cuisine, and a brief description.",
+      "role": "You are a dining expert. You will receive traveler preferences and destination research. Find dining options using the 'webSearch' tool and provide a list of recommendations, including price range, cuisine, and a brief description. Your output MUST be a JSON object with the following structure: { \"restaurants\": [{\"name\": \"restaurant name\", \"cuisine\": \"cuisine type\", \"priceRange\": \"price range\", \"description\": \"restaurant description\", \"location\": \"location\", \"dietaryOptions\": [\"list\", \"of\", \"dietary\", \"options\"]}] }",
       "goals": [
         "Find and analyze dining options based on preferences and dietary needs",
-        "Provide a list of recommended restaurants",
-        "Include price ranges and cuisine types"
+        "Provide a structured JSON output with restaurant recommendations",
+        "Include price ranges, cuisine types, and dietary options"
       ],
       "provider": "gemini",
       "llmConfig": {
@@ -146,10 +146,10 @@
       "id": "budgetingAgent",
       "name": "Budgeting Agent",
       "description": "Analyzes costs and provides spending guidance",
-      "role": "You are a budgeting specialist. You will receive the results from the previous planning steps. Analyze all the cost information to create a comprehensive budget summary. Provide a tiered cost breakdown and spending guidance.",
+      "role": "You are a budgeting specialist. You will receive the results from the previous planning steps. Analyze all the cost information to create a comprehensive budget summary. Your output MUST be a JSON object with the following structure: { \"totalBudget\": \"total budget\", \"estimatedCosts\": {\"flights\": \"flight cost\", \"accommodation\": \"accommodation cost\", \"transportation\": \"local transportation cost\", \"food\": \"food cost\", \"activities\": \"activities cost\", \"miscellaneous\": \"miscellaneous cost\"}, \"savingsTips\": [\"list\", \"of\", \"savings\", \"tips\"] }",
       "goals": [
         "Analyze all cost data from previous steps",
-        "Create a detailed tiered budget summary",
+        "Create a detailed tiered budget summary in JSON format",
         "Provide actionable spending guidance and tips"
       ],
       "provider": "gemini",
@@ -163,10 +163,10 @@
       "id": "itineraryCoordinator",
       "name": "Itinerary Coordinator",
       "description": "Creates a coherent daily schedule",
-      "role": "You are an itinerary coordinator. You will receive the results from all previous planning steps. Combine all this information into a coherent daily itinerary. The itinerary should be a day-by-day plan with suggestions for activities, meals, and logistics.",
+      "role": "You are an itinerary coordinator. You will receive the results from all previous planning steps. Combine all this information into a coherent daily itinerary. Your output MUST be a JSON object with the following structure: { \"itinerary\": [{\"day\": \"day number\", \"morning\": [{\"activity\": \"activity name\", \"time\": \"time\", \"location\": \"location\", \"notes\": \"notes\"}], \"afternoon\": [{\"activity\": \"activity name\", \"time\": \"time\", \"location\": \"location\", \"notes\": \"notes\"}], \"evening\": [{\"activity\": \"activity name\", \"time\": \"time\", \"location\": \"location\", \"notes\": \"notes\"}]}] }",
       "goals": [
         "Integrate all vacation components into a daily schedule",
-        "Create a logical and detailed day-by-day itinerary",
+        "Create a structured JSON output with a detailed day-by-day itinerary",
         "Consider logistics, pace, and all user preferences"
       ],
       "provider": "gemini",
@@ -180,11 +180,11 @@
       "id": "reviewAndRefineAgent",
       "name": "Review and Refine Agent",
       "description": "Final review and refinement of the complete vacation plan",
-      "role": "You are a senior travel advisor. You will receive the complete vacation plan. Critically review the entire plan for coherence and adherence to user preferences. Provide a final, polished summary of the plan and suggest any final refinements.",
+      "role": "You are a senior travel advisor. You will receive the complete vacation plan. Critically review the entire plan for coherence and adherence to user preferences. Provide a final, polished summary of the plan and suggest any final refinements. Your output MUST be a JSON object with the following structure: { \"reviewSummary\": \"summary of the review\", \"strengths\": [\"list\", \"of\", \"strengths\"], \"potentialIssues\": [{\"issue\": \"issue description\", \"suggestion\": \"suggestion to address the issue\"}], \"refinedPlan\": \"refined plan summary\" }",
       "goals": [
         "Critically review the entire vacation plan",
         "Identify and address any potential issues or inconsistencies",
-        "Provide a final, polished summary and a refined plan"
+        "Provide a structured JSON output with a final, polished summary and refined plan"
       ],
       "provider": "gemini",
       "llmConfig": {
@@ -272,7 +272,8 @@
       "agent": "destinationResearcher",
       "inputs": {
         "parsedVacationDetails": "{{planGoals}}",
-        "chosenDestination": "St. Petersburg/Clearwater, Florida"
+        "chosenDestination": "{{suggestDestinations}}",
+        "departureLocation": "{{planGoals.departureLocation}}"
       }
     },
     "findAccommodations": {
@@ -286,7 +287,8 @@
       "agent": "transportAgent",
       "inputs": {
         "parsedVacationDetails": "{{planGoals}}",
-        "destinationResults": "{{researchDestinations}}"
+        "destinationResults": "{{researchDestinations}}",
+        "departureLocation": "{{planGoals.departureLocation}}"
       }
     },
     "planActivities": {

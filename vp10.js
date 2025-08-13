@@ -1,11 +1,11 @@
 import { AgentFactory, TeamFactory, AgencyFactory } from '@virtron/agency';
-import { EventEmitter } from 'events';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import open from 'open';
-// Import tools used in vp9.json
+// Import tools used in vp10.json
+
 import { webSearchTool, dateTimeTool, calculatorTool } from '@virtron/agency-tools';
 
 // Load environment variables from a .env file.
@@ -27,7 +27,8 @@ async function main() {
       }
     });
 
-    // Register tools used by the agents in vp9.json
+    // Register tools used by the agents in vp10.json
+
     agentFactory.registerTool(webSearchTool);
     agentFactory.registerTool(dateTimeTool);
     agentFactory.registerTool(calculatorTool);
@@ -36,36 +37,33 @@ async function main() {
     const teamFactory = new TeamFactory({ agentFactory });
     const agencyFactory = new AgencyFactory({
       teamFactory,
-      agentFactory,
-      logging: {
-        level: 'debug',
-        tracing: true
-      }
+      agentFactory
     });
 
     // Get the directory name of the current module.
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    // Define the path to the vp9 configuration file.
-    const configPath = path.join(__dirname, 'vp9.json');
+    // Define the path to the vp10 configuration file.
+    const configPath = path.join(__dirname, 'vp10.json');
 
     // Load the agency configuration from the JSON file.
     const agency = await agencyFactory.loadAgencyFromFile(configPath);
 
-    console.log('Vacation Planner Agency (vp9.json) loaded successfully:');
+    console.log('Vacation Planner Agency (vp10.json) loaded successfully:');
     console.log('- name:', agency.name);
     console.log('- team:', Object.keys(agency.team));
     console.log('- brief:', Object.keys(agency.brief));
 
-    // The job to execute is 'st-pete-clearwater-trip-001' as in vp9.json
+    // The job to execute is 'st-pete-clearwater-trip-001' as in vp10.json
+
     const jobId = 'st-pete-clearwater-trip-001';
     const teamName = 'vacationTeam'; // The team name is 'vacationTeam'
 
     if (!agency.brief[jobId]) {
-        throw new Error(`Brief with ID "${jobId}" not found in vp9.json`);
+        throw new Error(`Brief with ID "${jobId}" not found in vp10.json`);
     }
     if (!agency.team[teamName]) {
-        throw new Error(`Team with name "${teamName}" not found in vp9.json`);
+        throw new Error(`Team with name "${teamName}" not found in vp10.json`);
     }
 
     // Create a custom context object with the agency instance
@@ -84,32 +82,6 @@ async function main() {
     console.log('Executing job...');
     console.log('Using initial inputs for the workflow:');
     console.log('- brief:', JSON.stringify(brief, null, 2));
-
-    // Demonstrate event-based communication
-    const senderAgentId = 'goalPlanner';
-    const recipientAgentId = 'destinationSuggester';
-    const messageContent = { type: 'preferences', data: brief };
-
-    // Send a message from sender to recipient
-    console.log(`Sending message from ${senderAgentId} to ${recipientAgentId}...`);
-    agency.sendMessage(recipientAgentId, senderAgentId, messageContent);
-
-    // Set up a listener for messages to the recipient
-    agency.onMessage(recipientAgentId, (senderId, content) => {
-      console.log(`Message received by ${recipientAgentId} from ${senderId}:`, content);
-    });
-
-    // Demonstrate shared memory system
-    const memoryScopeId = 'sharedVacationData';
-    const memoryScope = agency.createMemoryScope(memoryScopeId);
-
-    // Write data to the shared memory scope
-    console.log(`Writing data to shared memory scope "${memoryScopeId}"...`);
-    memoryScope.remember('travelerPreferences', brief);
-
-    // Read data from the shared memory scope
-    const preferences = memoryScope.recall('travelerPreferences');
-    console.log(`Data read from shared memory scope "${memoryScopeId}":`, preferences);
 
     // Execute the team directly with the context
     const team = agency.team[teamName];
@@ -139,7 +111,7 @@ async function main() {
     htmlContent += `</body>\n</html>`;
 
     // Save the results to an HTML file.
-    const resultsFilePath = path.join(__dirname, 'vacation-results-vp9.html');
+    const resultsFilePath = path.join(__dirname, 'vacation-results-vp10.html');
     await fs.writeFile(resultsFilePath, htmlContent, 'utf8');
     console.log(`Results saved to ${resultsFilePath}`);
     // Automatically open the results file using npm open
