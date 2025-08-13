@@ -66,11 +66,11 @@
       "id": "accommodationAgent",
       "name": "Accommodation Agent",
       "description": "Finds and evaluates lodging options",
-      "role": "You are an accommodation specialist. You will receive traveler preferences and destination research. Find accommodation options using the 'webSearch' tool and provide recommendations with pricing and amenities.",
+      "role": "You are an accommodation specialist. You will receive traveler preferences and destination research. Use the 'webSearch' tool to find specific quiet Airbnb options with kitchens in St. Petersburg or nearby beach towns for the dates August 10-15, 2025. Provide detailed recommendations, including pricing, amenities, and booking links.",
       "goals": [
-        "Use search tool to find relevant accommodation information",
+        "Use the 'webSearch' tool to search for quiet Airbnb options with kitchens in St. Petersburg or nearby beach towns for August 10-15, 2025",
         "Analyze and filter options based on budget and preferences",
-        "Provide a list of suitable accommodation recommendations"
+        "Provide a detailed list of suitable accommodation recommendations with pricing and amenities"
       ],
       "provider": "gemini",
       "llmConfig": {

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import open from 'open';
-// Import tools used in vp9.json
+// Import tools used in vp.json
 import { webSearchTool, dateTimeTool, calculatorTool } from '@virtron/agency-tools';
 
 // Load environment variables from a .env file.
@@ -27,7 +27,7 @@ async function main() {
       }
     });
 
-    // Register tools used by the agents in vp9.json
+    // Register tools used by the agents in vp.json
     agentFactory.registerTool(webSearchTool);
     agentFactory.registerTool(dateTimeTool);
     agentFactory.registerTool(calculatorTool);
@@ -47,25 +47,25 @@ async function main() {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     // Define the path to the vp9 configuration file.
-    const configPath = path.join(__dirname, 'vp9.json');
+    const configPath = path.join(__dirname, 'vp.json');
 
     // Load the agency configuration from the JSON file.
     const agency = await agencyFactory.loadAgencyFromFile(configPath);
 
-    console.log('Vacation Planner Agency (vp9.json) loaded successfully:');
+    console.log('Vacation Planner Agency (vp.json) loaded successfully:');
     console.log('- name:', agency.name);
     console.log('- team:', Object.keys(agency.team));
     console.log('- brief:', Object.keys(agency.brief));
 
-    // The job to execute is 'st-pete-clearwater-trip-001' as in vp9.json
+    // The job to execute is 'st-pete-clearwater-trip-001' as in vp.json
     const jobId = 'st-pete-clearwater-trip-001';
     const teamName = 'vacationTeam'; // The team name is 'vacationTeam'
 
     if (!agency.brief[jobId]) {
-        throw new Error(`Brief with ID "${jobId}" not found in vp9.json`);
+        throw new Error(`Brief with ID "${jobId}" not found in vp.json`);
     }
     if (!agency.team[teamName]) {
-        throw new Error(`Team with name "${teamName}" not found in vp9.json`);
+        throw new Error(`Team with name "${teamName}" not found in vp.json`);
     }
 
     // Create a custom context object with the agency instance

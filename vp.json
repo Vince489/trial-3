@@ -1,0 +1,198 @@
+{
+  "agency": {
+    "name": "Smart Vacation Planner",
+    "description": "An agency that creates personalized vacation plans"
+  },
+  "agents": {
+    "goalPlanner": {
+      "id": "goalPlanner",
+      "name": "Goal Planning Agent",
+      "description": "Converts high-level vacation ideas into structured plans",
+      "role": "You are a data processing agent. Your ONLY job is to take the user's input and convert it into a structured JSON object. You MUST NOT add, change, or interpret the data in any way. Your output MUST be a single JSON object containing all the original input fields: numTravelers, ageRange, sharedInterests, dietaryRestrictions, mobilityConcerns, timeOfYear, tripDuration, travelDistance, destinationIdeas, totalBudget, flightPref, accommodationPref, foodPref, activityPref, accommodationType, accommodationFeature, numRooms, tripPace, tripPurpose, freeTime, mustHaves, dealBreakers, flightPreferences, accommodationBudgetPreference, foodPreferences, activityPreferences, and departureLocation. Do NOT add any other fields or creative content.",
+      "goals": [
+        "Understand user's vacation intent from a comprehensive input.",
+        "Parse all provided initial preferences into a structured JSON output (travelerPreferences).",
+        "Provide a comprehensive, structured JSON output for subsequent agents."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 2048
+      }
+    },
+    "destinationSuggester": {
+      "id": "destinationSuggester",
+      "name": "Destination Suggestion Agent",
+      "description": "Analyzes detailed traveler preferences to suggest creative, suitable trip ideas (domestic or international).",
+      "role": "You are a highly creative travel planner. Based on the provided 'travelerPreferences' JSON object, generate 3-5 distinct vacation ideas. For each idea, suggest a specific destination and provide a brief overview of why it's a good fit. Use the 'webSearch' tool to get information. Your output MUST be a JSON array of objects, each containing 'destinationName', 'justification', and 'briefOverview'.",
+      "goals": [
+        "Brainstorm and identify destinations that align with input preferences.",
+        "Use the search tool to find and validate information about potential destinations.",
+        "Generate creative, distinct, and well-justified vacation ideas.",
+        "Provide a structured JSON output."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "destinationResearcher": {
+      "id": "destinationResearcher",
+      "name": "Destination Research Agent",
+      "description": "Researches specific details for a destination based on a provided list of places and activities.",
+      "role": "You are a destination expert. You will receive a list of places and activities from a previous agent. Your task is to use the 'webSearch' tool to gather more specific details about each item on the list, such as hours of operation, admission fees, and exact locations. Then, provide a detailed analysis of the destination that enhances the initial plan.",
+      "goals": [
+        "Research the provided destination using the search tool to verify and expand on the list of places and activities.",
+        "Gather specific, verifiable details about each item on the provided list.",
+        "Provide a detailed analysis of the destination that enhances the initial plan."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    }
+  },
+  "team": {
+    "vacationTeam": {
+      "name": "Vacation Planning Team",
+      "description": "A team of agents that collaborate to create a comprehensive vacation plan.",
+      "agents": [
+        "goalPlanner",
+        "destinationSuggester",
+        "destinationResearcher"
+      ],
+      "jobs": {
+        "planGoals": {
+          "description": "Convert vacation preferences into structured plan",
+          "agent": "goalPlanner",
+          "inputs": {
+            "numTravelers": 2,
+            "ageRange": "30s-40s",
+            "sharedInterests": [
+              "Yoga",
+              "whole foods",
+              "sightseeing",
+              "beaches",
+              "St. Petersburg's vibrant arts scene (murals)",
+              "Nature/Botanical gardens",
+              "Beach culture",
+              "Farmers markets",
+              "Cooking local healthy food"
+            ],
+            "dietaryRestrictions": "None specified, but interested in 'whole foods'",
+            "mobilityConcerns": "None",
+            "timeOfYear": "Aug 10-15, 2025",
+            "tripDuration": "5 days",
+            "travelDistance": "Short-haul",
+            "destinationIdeas": [
+              "St. Petersburg/Clearwater, Florida"
+            ],
+            "totalBudget": "2400",
+            "flightPref": "Unspecified, but budget-friendly",
+            "accommodationPref": "Airbnb with kitchen, quiet",
+            "foodPref": "Local, whole foods, cooking some meals",
+            "activityPref": "Yoga, beaches, sightseeing, museums (Dali), parks, markets",
+            "accommodationType": "Airbnb",
+            "accommodationFeature": "Kitchen, quiet",
+            "numRooms": 1,
+            "tripPace": "Relaxed",
+            "tripPurpose": "Relaxation and Wellness Coastal Trip",
+            "freeTime": "Prioritize early mornings/late afternoons for outdoor activities",
+            "mustHaves": [
+              "Beaches",
+              "quiet lodging",
+              "kitchen for cooking"
+            ],
+            "dealBreakers": [
+              "Noisy areas"
+            ],
+            "flightPreferences": "Budget-friendly",
+            "accommodationBudgetPreference": "Budget-friendly",
+            "foodPreferences": "Local, whole foods, budget-friendly",
+            "activityPreferences": "Free/low-cost activities",
+            "departureLocation": "Philadelphia, PA"
+          }
+        },
+        "suggestDestinations": {
+          "agent": "destinationSuggester",
+          "inputs": {
+            "travelerPreferences": "{{planGoals}}"
+          },
+          "dependsOn": ["planGoals"]
+        },
+        "researchDestination": {
+          "agent": "destinationResearcher",
+          "inputs": {
+            "previousAgentOutput": "{{suggestDestinations}}",
+            "destination": "{{planGoals.destinationIdeas[0]}}"
+          }
+        }
+      },
+      "workflow": [
+        "planGoals",
+        "suggestDestinations",
+        "researchDestination"
+      ]
+    }
+  },
+  "brief": {
+    "st-pete-clearwater-trip-001": {
+      "numTravelers": 2,
+      "ageRange": "30s-40s",
+      "sharedInterests": [
+        "Yoga",
+        "whole foods",
+        "sightseeing",
+        "beaches",
+        "St. Petersburg's vibrant arts scene (murals)",
+        "Nature/Botanical gardens",
+        "Beach culture",
+        "Farmers markets",
+        "Cooking local healthy food"
+      ],
+      "dietaryRestrictions": "None specified, but interested in 'whole foods'",
+      "mobilityConcerns": "None",
+      "timeOfYear": "Aug 10-15, 2025",
+      "tripDuration": "5 days",
+      "travelDistance": "Short-haul",
+      "destinationIdeas": [
+        "St. Petersburg/Clearwater, Florida"
+      ],
+      "totalBudget": "2400",
+      "flightPref": "Unspecified, but budget-friendly",
+      "accommodationPref": "Airbnb with kitchen, quiet",
+      "foodPref": "Local, whole foods, cooking some meals",
+      "activityPref": "Yoga, beaches, sightseeing, museums (Dali), parks, markets",
+      "accommodationType": "Airbnb",
+      "accommodationFeature": "Kitchen, quiet",
+      "numRooms": 1,
+      "tripPace": "Relaxed",
+      "tripPurpose": "Relaxation and Wellness Coastal Trip",
+      "freeTime": "Prioritize early mornings/late afternoons for outdoor activities",
+      "mustHaves": [
+        "Beaches",
+        "quiet lodging",
+        "kitchen for cooking"
+      ],
+      "dealBreakers": [
+        "Noisy areas"
+      ],
+      "flightPreferences": "Budget-friendly",
+      "accommodationBudgetPreference": "Budget-friendly",
+      "foodPreferences": "Local, whole foods, budget-friendly",
+      "activityPreferences": "Free/low-cost activities",
+      "departureLocation": "Philadelphia, PA"
+    }
+  }
+}
