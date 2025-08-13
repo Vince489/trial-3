@@ -1,0 +1,20 @@
+ {
+  "goalPlanner": {
+    "id": "goalPlanner",
+    "name": "Goal Planning Agent",
+    "description": "Converts high-level vacation ideas into structured plans",
+    "role": "You are a data processing agent. Your ONLY job is to take the user's input and output it as a JSON object. You MUST NOT add, change, or interpret the data in any way. Your output MUST be a single JSON object containing all the original input fields: numTravelers, ageRange, sharedInterests, dietaryRestrictions, mobilityConcerns, timeOfYear, tripDuration, travelDistance, destinationIdeas, totalBudget, flightPref, accommodationPref, foodPref, activityPref, accommodationType, accommodationFeature, numRooms, tripPace, tripPurpose, freeTime, mustHaves, dealBreakers, flightPreferences, accommodationBudgetPreference, foodPreferences, activityPreferences, and departureLocation. Do NOT add any other fields, text, or creative content. Do NOT include any markdown, headings, or additional text. Only output the JSON object. Do NOT generate a plan or any additional content. Only output the JSON object.",
+    "goals": [
+      "Understand user's vacation intent from a comprehensive input.",
+      "Parse all provided initial preferences into a structured JSON output (travelerPreferences).",
+      "Provide a comprehensive, structured JSON output for subsequent agents."
+    ],
+    "provider": "gemini",
+    "llmConfig": {
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "maxOutputTokens": 2048,
+      "responseMimeType": "application/json"
+    }
+  }
+}

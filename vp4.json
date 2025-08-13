@@ -1,0 +1,349 @@
+{
+  "agency": {
+    "name": "Smart Vacation Planner",
+    "description": "An agency that creates personalized vacation plans"
+  },
+  "agents": {
+    "goalPlanner": {
+      "id": "goalPlanner",
+      "name": "Goal Planning Agent",
+      "description": "Converts high-level vacation ideas into structured plans",
+      "role": "You are a data processing agent. Your ONLY job is to take the user's input and convert it into a structured JSON object. You MUST NOT add, change, or interpret the data in any way. Your output MUST be a single JSON object containing all the original input fields: vacationIdea, preferences, travelDates, budget, weatherPreferences, culturalInterests, lodgingPreferences, interests, and budgetLevel. Do NOT add any other fields or creative content.",
+      "goals": [
+        "Understand user's vacation intent.",
+        "Parse all provided initial preferences into a structured JSON output.",
+        "Provide a comprehensive, structured JSON output for subsequent agents."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 2048
+      }
+    },
+    "destinationResearcher": {
+      "id": "destinationResearcher",
+      "name": "Destination Research Agent",
+      "description": "Researches a specific destination based on preferences",
+    "role": "You are a destination expert. You will receive an input object named 'parsedVacationDetails' which contains all vacation preferences, including the destination. Your task is to research the provided destination based on these preferences. IMPORTANT: You MUST use the search tool to get up-to-date information about the destination. Use the search tool by writing [TOOL: webSearch({\"query\": \"your search query here\"})] or [TOOL: webSearch(\"simple query\")]. Your output should be a detailed analysis of the provided destination.",
+      "goals": [
+        "Research the provided destination using the search tool",
+        "Gather comprehensive information about the destination based on user preferences",
+        "Provide a detailed analysis of the destination"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+        "tools": {
+            "webSearch": "webSearch"
+        }
+    },
+    "accommodationAgent": {
+      "id": "accommodationAgent",
+      "name": "Accommodation Agent",
+      "description": "Finds and evaluates lodging options",
+      "role": "You are an accommodation specialist. You will receive 'parsedVacationDetails' and 'destinationResults'. Extract the recommended destination and lodging preferences. Use the search tool to find current accommodation options. Use [TOOL: travelSearch({\"query\": \"hotels in [destination] [dates]\"})] format. Provide detailed accommodation recommendations with pricing and amenities.",
+      "goals": [
+        "Find available accommodations using the search tool",
+        "Compare amenities, prices, and reviews based on current information",
+        "Create shortlist of best options with specific details from search results"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 4096
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "transportAgent": {
+    "id": "transportAgent",
+    "name": "Transport Agent",
+    "description": "Finds and evaluates flight options",
+    "role": "You are a transportation specialist. You will receive 'parsedVacationDetails' and 'destinationResults'. Extract the recommended destination and travel dates. You will also be provided with the departure location. Use the travelSearch tool to find current flight information, specifically from the given departure location to the recommended destination. Use [TOOL: travelSearch({\"query\": \"flights from [departure_location] to [destination] on [departureDate] returning on [returnDate]\"})] format. Provide detailed flight recommendations with pricing and travel times.",
+    "goals": [
+        "Find available flights using the search tool, specifying departure and destination locations.",
+        "Compare flight prices, travel times, and layovers based on current information.",
+        "Create a shortlist of the best flight options with specific details."
+            ],
+            "provider": "gemini",
+            "llmConfig": {
+                "model": "gemini-2.5-flash-lite",
+                "temperature": 0.7,
+                "maxOutputTokens": 4096
+            },
+            "tools": {
+                        "webSearch": "webSearch"
+
+            }
+        },
+        "activityPlanner": {
+      "id": "activityPlanner",
+      "name": "Activity Planning Agent",
+      "description": "Curates experiences tailored to traveler interests",
+      "role": "You are an activity planning expert. You will receive 'parsedVacationDetails' and 'destinationResults'. Extract 'interests' and 'travelDates' from parsedVacationDetails and the recommended destination from destinationResults. Use search and datetime tools to find activities. Use [TOOL: travelSearch({\"query\": \"activities in [destination]\"})] and [TOOL: datetime({\"action\": \"get_current_date\"})] formats. Automatically select the highest rated destination and create activities for that location only.",
+      "goals": [
+        "Automatically select the highest rated destination from research results",
+        "Find relevant activities and attractions using the search tool",
+        "Use the datetime tool to check days of the week for scheduling",
+        "Balance relaxing and active experiences based on current information"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 2048
+      },
+        "tools": {
+                    "webSearch": "webSearch"
+,
+            "datetime": "datetime"
+        }
+    },
+    "diningAgent": {
+      "id": "diningAgent",
+      "name": "Dining Agent",
+      "description": "Recommends dining experiences based on preferences",
+      "role": "You are a dining specialist. You will receive 'parsedVacationDetails' and 'destinationResults'. Extract the recommended destination and cultural interests (specifically cuisine). Use the search tool to find current dining options. Use [TOOL: travelSearch({\"query\": \"best local restaurants in [destination]\"})] format. Provide diverse dining recommendations, including local specialties and highly-rated establishments, with estimated pricing and cuisine types.",
+      "goals": [
+        "Find diverse dining options using the search tool",
+        "Identify local cuisine and highly-rated restaurants",
+        "Provide estimated pricing and cuisine types for recommendations"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 2048
+      },
+      "tools": {
+                "webSearch": "webSearch"
+
+      }
+    },
+    "itineraryCoordinator": {
+      "id": "itineraryCoordinator",
+      "name": "Itinerary Coordination Agent",
+      "description": "Creates coherent daily schedules from all plans",
+      "role": "You are an itinerary coordinator. You receive all previous results and create a day-by-day schedule. Use [TOOL: datetime({\"action\": \"parse_date\", \"date\": \"date_string\"})] and [TOOL: calculator({\"operation\": \"add\", \"a\": 10, \"b\": 5})] formats for time and distance calculations. Create a logical daily schedule with travel times and rest periods.",
+      "goals": [
+        "Organize activities into logical daily schedules using the datetime tool",
+        "Include travel times between locations with appropriate buffers",
+        "Balance activities with rest periods throughout the day",
+        "Use the calculator tool for precise time and distance calculations"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 4096
+      },
+      "tools": {
+        "datetime": "datetime",
+                "webSearch": "webSearch"
+,
+        "calculator": "calculator"
+      }
+    },
+    "budgetingAgent": {
+      "id": "budgetingAgent",
+      "name": "Budgeting Agent",
+      "description": "Provides cost analysis and spending guidance",
+      "role": "You are a budget analyst. You receive all previous results and calculate total costs. Use [TOOL: travelSearch({\"query\": \"cost of [item] in [destination]\"})] for current pricing and [TOOL: calculator({\"operation\": \"multiply\", \"a\": 100, \"b\": 7})] for calculations. Provide detailed cost breakdowns with tiered options.",
+      "goals": [
+        "Calculate total expected costs using current pricing from search results",
+        "Provide tiered options (luxury/mid/economy) with specific price points",
+        "Break down costs by category with detailed estimates based on search data",
+        "Use the calculator tool to perform precise calculations on pricing data"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 2048
+      },
+      "tools": {
+                "webSearch": "webSearch"
+,
+        "calculator": "calculator"
+      }
+    },
+    "reviewAndRefineAgent": {
+      "id": "reviewAndRefineAgent",
+      "name": "Review and Refine Agent",
+      "description": "Reviews the complete vacation plan for coherence and adherence to preferences, making adjustments as needed.",
+      "role": "You are a meticulous reviewer and refiner. Your job is to take the complete vacation plan (all outputs from previous agents) and ensure it is cohesive, meets all user preferences, and stays within budget. Identify any inconsistencies, suggest improvements, and ensure a smooth and enjoyable experience. You MUST critically evaluate all aspects of the plan, including destination, accommodation, transportation, activities, dining, and budget. Provide a summary of your findings and any necessary adjustments.",
+      "goals": [
+        "Evaluate the complete vacation plan for overall coherence and consistency.",
+        "Verify that all user preferences (from 'parsedVacationDetails') are met.",
+        "Check adherence to the specified budget ('budget' and 'budgetLevel').",
+        "Identify and flag any potential issues or inconsistencies in the plan.",
+        "Suggest concrete improvements or alternative options to enhance the plan.",
+        "Ensure a logical flow and balance between different aspects of the vacation."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 4096
+      }
+    }
+  },
+  "team": {
+    "vacationTeam": {
+      "name": "Vacation Planning Team",
+      "description": "A team that creates comprehensive vacation plans",
+      "agents": [
+        "goalPlanner",
+        "destinationResearcher",
+        "accommodationAgent",
+        "transportAgent",
+        "activityPlanner",
+        "diningAgent",
+        "itineraryCoordinator",
+        "budgetingAgent",
+        "reviewAndRefineAgent"
+      ],
+      "jobs": {
+        "planGoals": {
+          "description": "Convert vacation idea into structured plan",
+          "agent": "goalPlanner",
+          "inputs": {
+            "vacationIdea": "Relaxing beach vacation in Miami with some cultural experiences",
+            "preferences": "Beachfront accommodations, local cuisine, some water activities, cultural sites",
+            "travelDates": "Aug 15-22, 2025",
+            "budget": "Mid-range ($3000-5000)",
+            "weatherPreferences": "Warm and sunny",
+            "culturalInterests": "Local history, cuisine, architecture",
+            "lodgingPreferences": "Beachfront resort with pool",
+            "interests": "Snorkeling, local markets, historical sites, beach relaxation",
+          "budgetLevel": "Mid-range with some splurges",
+          "departureLocation": "Riverdale, GA"
+        }
+      },
+        "researchDestinations": {
+          "description": "Research and compare potential destinations",
+          "agent": "destinationResearcher",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}"
+          }
+        },
+        "findAccommodations": {
+          "description": "Find and evaluate lodging options",
+          "agent": "accommodationAgent",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}"
+          }
+        },
+        "findTransportation": {
+          "description": "Find and evaluate transportation options",
+          "agent": "transportAgent",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}",
+            "departureLocation": "{{planGoals.output.departureLocation}}",
+            "destinationLocation": "{{planGoals.output.vacationIdea.split(' in ')[1].split(' with ')[0]}}",
+            "departureDate": "{{planGoals.output.travelDates.split('-')[0]}}",
+            "returnDate": "{{planGoals.output.travelDates.split('-')[1]}}"
+          }
+        },
+        "planActivities": {
+          "description": "Curate experiences based on interests",
+          "agent": "activityPlanner",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}"
+          }
+        },
+        "planDining": {
+          "description": "Recommend dining experiences based on preferences",
+          "agent": "diningAgent",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}"
+          }
+        },
+        "createBudget": {
+          "description": "Analyze costs and provide spending guidance",
+          "agent": "budgetingAgent",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}",
+            "accommodationsResults": "{{findAccommodations.output}}",
+            "activitiesResults": "{{planActivities.output}}",
+            "transportResults": "{{findTransportation.output}}",
+            "diningResults": "{{planDining.output}}"
+          }
+        },
+        "createItinerary": {
+          "description": "Create coherent daily schedule",
+          "agent": "itineraryCoordinator",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}",
+            "accommodationsResults": "{{findAccommodations.output}}",
+            "activitiesResults": "{{planActivities.output}}",
+            "transportResults": "{{findTransportation.output}}",
+            "diningResults": "{{planDining.output}}",
+            "budgetSummary": "{{createBudget.output}}"
+          }
+        },
+        "reviewPlan": {
+          "description": "Review and refine the complete vacation plan",
+          "agent": "reviewAndRefineAgent",
+          "inputs": {
+            "parsedVacationDetails": "{{planGoals.output}}",
+            "destinationResults": "{{researchDestinations.output}}",
+            "accommodationsResults": "{{findAccommodations.output}}",
+            "activitiesResults": "{{planActivities.output}}",
+            "transportResults": "{{findTransportation.output}}",
+            "diningResults": "{{planDining.output}}",
+            "budgetSummary": "{{createBudget.output}}",
+            "itineraryResults": "{{createItinerary.output}}"
+          }
+        }
+      },
+      "workflow": [
+        "planGoals",
+        "researchDestinations",
+        "findAccommodations",
+        "findTransportation",
+        "planActivities",
+        "planDining",
+        "createBudget",
+        "createItinerary",
+        "reviewPlan"
+      ]
+    }
+  },
+  "brief": {
+    "beach-vacation-001": {
+      "title": "Relaxing Beach Vacation in Miami, FL",
+      "overview": "Plan a 7-day relaxing beach vacation in Miami, FL for a couple",
+      "background": "Couple in their 30s looking for a mix of relaxation and cultural experiences",
+      "objective": "Create a complete 7-day itinerary with accommodations, dining, and activities",
+      "vacationIdea": "Relaxing beach vacation in Miami with some cultural experiences",
+      "preferences": "Beachfront accommodations, local cuisine, some water activities, cultural sites",
+      "travelDates": "Aug 15-22, 2025",
+      "budget": "Mid-range ($3000-5000)",
+      "weatherPreferences": "Warm and sunny",
+      "culturalInterests": "Local history, cuisine, architecture",
+      "lodgingPreferences": "Beachfront resort with pool",
+      "interests": "Snorkeling, local markets, historical sites, beach relaxation",
+      "budgetLevel": "Mid-range with some splurges",
+      "topic": "Beach Vacation"
+    }
+  },
+  "assignments": {
+    "beach-vacation-001": {
+      "assignedTo": "vacationTeam",
+      "type": "team"
+    }
+  }
+}

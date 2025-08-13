@@ -1,0 +1,406 @@
+{
+  "agency": {
+    "name": "Smart Vacation Planner",
+    "description": "An agency that creates personalized vacation plans"
+  },
+  "agents": {
+    "goalPlanner": {
+      "id": "goalPlanner",
+      "name": "Goal Planning Agent",
+      "description": "Converts high-level vacation ideas into structured plans",
+      "role": "You are a data processing agent. Your ONLY job is to take the user's input and convert it into a structured JSON object. You MUST NOT add, change, or interpret the data in any way. Your output MUST be a single JSON object containing all the original input fields: numTravelers, ageRange, sharedInterests, dietaryRestrictions, mobilityConcerns, timeOfYear, tripDuration, travelDistance, destinationIdeas, totalBudget, flightPref, accommodationPref, foodPref, activityPref, accommodationType, accommodationFeature, numRooms, tripPace, tripPurpose, freeTime, mustHaves, dealBreakers, flightPreferences, accommodationBudgetPreference, foodPreferences, activityPreferences, and departureLocation. Do NOT add any other fields or creative content.",
+      "goals": [
+        "Understand user's vacation intent from a comprehensive input.",
+        "Parse all provided initial preferences into a structured JSON output (travelerPreferences).",
+        "Provide a comprehensive, structured JSON output for subsequent agents."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 2048
+      }
+    },
+    "destinationSuggester": {
+      "id": "destinationSuggester",
+      "name": "Destination Suggestion Agent",
+      "description": "Analyzes detailed traveler preferences to suggest creative, suitable trip ideas (domestic or international).",
+      "role": "You are a highly creative travel planner. Based on the provided 'travelerPreferences' JSON object, generate 3-5 distinct vacation ideas. For each idea, suggest a specific destination and provide a brief overview of why it's a good fit. Use the 'webSearch' tool to get information. Your output MUST be a JSON array of objects, each containing 'destinationName', 'justification', and 'briefOverview'.",
+      "goals": [
+        "Brainstorm and identify destinations that align with input preferences.",
+        "Use the search tool to find and validate information about potential destinations.",
+        "Generate creative, distinct, and well-justified vacation ideas.",
+        "Provide a structured JSON output."
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "destinationResearcher": {
+      "id": "destinationResearcher",
+      "name": "Destination Research Agent",
+      "description": "Researches a specific destination based on preferences",
+      "role": "You are a destination expert. You will receive traveler preferences and a chosen destination. Research the destination using the 'webSearch' tool and provide a detailed analysis.",
+      "goals": [
+        "Research the provided destination using the search tool",
+        "Gather comprehensive information about the destination based on user preferences",
+        "Provide a detailed analysis of the destination"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "accommodationAgent": {
+      "id": "accommodationAgent",
+      "name": "Accommodation Agent",
+      "description": "Finds and evaluates lodging options",
+      "role": "You are an accommodation specialist. You will receive traveler preferences and destination research. Find accommodation options using the 'webSearch' tool and provide recommendations with pricing and amenities.",
+      "goals": [
+        "Use search tool to find relevant accommodation information",
+        "Analyze and filter options based on budget and preferences",
+        "Provide a list of suitable accommodation recommendations"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "transportAgent": {
+      "id": "transportAgent",
+      "name": "Transportation Agent",
+      "description": "Finds and evaluates transportation options",
+      "role": "You are a transportation specialist. You will receive traveler preferences and destination research. Find transportation options using the 'webSearch' tool and provide a summary of options, costs, and logistics.",
+      "goals": [
+        "Find and analyze flight information for the specified dates and locations",
+        "Research local transportation options (car rental, public transit)",
+        "Provide a comprehensive overview of transportation costs and logistics"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "activityPlanner": {
+      "id": "activityPlanner",
+      "name": "Activity Planner Agent",
+      "description": "Curates experiences based on interests",
+      "role": "You are an activity planner. You will receive traveler preferences and destination research. Find potential activities using the 'webSearch' tool and provide a list of curated activities with descriptions, pricing, and booking information.",
+      "goals": [
+        "Find and analyze activities based on user preferences",
+        "Curate a list of activities with descriptions and costs",
+        "Provide booking information where applicable"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "diningAgent": {
+      "id": "diningAgent",
+      "name": "Dining Agent",
+      "description": "Recommends dining experiences based on preferences",
+      "role": "You are a dining expert. You will receive traveler preferences and destination research. Find dining options using the 'webSearch' tool and provide a list of recommendations, including price range, cuisine, and a brief description.",
+      "goals": [
+        "Find and analyze dining options based on preferences and dietary needs",
+        "Provide a list of recommended restaurants",
+        "Include price ranges and cuisine types"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      },
+      "tools": {
+        "webSearch": "webSearch"
+      }
+    },
+    "budgetingAgent": {
+      "id": "budgetingAgent",
+      "name": "Budgeting Agent",
+      "description": "Analyzes costs and provides spending guidance",
+      "role": "You are a budgeting specialist. You will receive the results from the previous planning steps. Analyze all the cost information to create a comprehensive budget summary. Provide a tiered cost breakdown and spending guidance.",
+      "goals": [
+        "Analyze all cost data from previous steps",
+        "Create a detailed tiered budget summary",
+        "Provide actionable spending guidance and tips"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 3072
+      }
+    },
+    "itineraryCoordinator": {
+      "id": "itineraryCoordinator",
+      "name": "Itinerary Coordinator",
+      "description": "Creates a coherent daily schedule",
+      "role": "You are an itinerary coordinator. You will receive the results from all previous planning steps. Combine all this information into a coherent daily itinerary. The itinerary should be a day-by-day plan with suggestions for activities, meals, and logistics.",
+      "goals": [
+        "Integrate all vacation components into a daily schedule",
+        "Create a logical and detailed day-by-day itinerary",
+        "Consider logistics, pace, and all user preferences"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 4096
+      }
+    },
+    "reviewAndRefineAgent": {
+      "id": "reviewAndRefineAgent",
+      "name": "Review and Refine Agent",
+      "description": "Final review and refinement of the complete vacation plan",
+      "role": "You are a senior travel advisor. You will receive the complete vacation plan. Critically review the entire plan for coherence and adherence to user preferences. Provide a final, polished summary of the plan and suggest any final refinements.",
+      "goals": [
+        "Critically review the entire vacation plan",
+        "Identify and address any potential issues or inconsistencies",
+        "Provide a final, polished summary and a refined plan"
+      ],
+      "provider": "gemini",
+      "llmConfig": {
+        "model": "gemini-2.5-flash-lite",
+        "temperature": 0.7,
+        "maxOutputTokens": 4096
+      }
+    }
+  },
+  "team": {
+    "vacationTeam": {
+      "name": "Vacation Planning Team",
+      "description": "A team of agents that collaborate to create a comprehensive vacation plan.",
+      "agents": [
+        "goalPlanner",
+        "destinationSuggester",
+        "destinationResearcher",
+        "accommodationAgent",
+        "transportAgent",
+        "activityPlanner",
+        "diningAgent",
+        "budgetingAgent",
+        "itineraryCoordinator",
+        "reviewAndRefineAgent"
+      ],
+      "jobs": {
+    "planGoals": {
+      "description": "Convert vacation preferences into structured plan",
+      "agent": "goalPlanner",
+      "inputs": {
+        "numTravelers": 2,
+        "ageRange": "30s-40s",
+        "sharedInterests": [
+          "Yoga",
+          "whole foods",
+          "sightseeing",
+          "beaches",
+          "St. Petersburg's vibrant arts scene (murals)",
+          "Nature/Botanical gardens",
+          "Beach culture",
+          "Farmers markets",
+          "Cooking local healthy food"
+        ],
+        "dietaryRestrictions": "None specified, but interested in 'whole foods'",
+        "mobilityConcerns": "None",
+        "timeOfYear": "Aug 10-15, 2025",
+        "tripDuration": "5 days",
+        "travelDistance": "Short-haul",
+        "destinationIdeas": [
+          "St. Petersburg/Clearwater, Florida"
+        ],
+        "totalBudget": "2400",
+        "flightPref": "Unspecified, but budget-friendly",
+        "accommodationPref": "Airbnb with kitchen, quiet",
+        "foodPref": "Local, whole foods, cooking some meals",
+        "activityPref": "Yoga, beaches, sightseeing, museums (Dali), parks, markets",
+        "accommodationType": "Airbnb",
+        "accommodationFeature": "Kitchen, quiet",
+        "numRooms": 1,
+        "tripPace": "Relaxed",
+        "tripPurpose": "Relaxation and Wellness Coastal Trip",
+        "freeTime": "Prioritize early mornings/late afternoons for outdoor activities",
+        "mustHaves": [
+          "Beaches",
+          "quiet lodging",
+          "kitchen for cooking"
+        ],
+        "dealBreakers": [
+          "Noisy areas"
+        ],
+        "flightPreferences": "Budget-friendly",
+        "accommodationBudgetPreference": "Budget-friendly",
+        "foodPreferences": "Local, whole foods, budget-friendly",
+        "activityPreferences": "Free/low-cost activities",
+        "departureLocation": "Philadelphia, PA"
+      }
+    },
+    "suggestDestinations": {
+      "agent": "destinationSuggester",
+      "inputs": {
+        "travelerPreferences": "{{planGoals}}"
+      }
+    },
+    "researchDestinations": {
+      "agent": "destinationResearcher",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "chosenDestination": "{{suggestDestinations}}"
+      }
+    },
+    "findAccommodations": {
+      "agent": "accommodationAgent",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}"
+      }
+    },
+    "findTransportation": {
+      "agent": "transportAgent",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}"
+      }
+    },
+    "planActivities": {
+      "agent": "activityPlanner",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}"
+      }
+    },
+    "planDining": {
+      "agent": "diningAgent",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}"
+      }
+    },
+    "createBudget": {
+      "agent": "budgetingAgent",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}",
+        "accommodationsResults": "{{findAccommodations}}",
+        "transportResults": "{{findTransportation}}",
+        "activitiesResults": "{{planActivities}}",
+        "diningResults": "{{planDining}}"
+      }
+    },
+    "createItinerary": {
+      "agent": "itineraryCoordinator",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}",
+        "accommodationsResults": "{{findAccommodations}}",
+        "transportResults": "{{findTransportation}}",
+        "activitiesResults": "{{planActivities}}",
+        "diningResults": "{{planDining}}",
+        "budgetSummary": "{{createBudget}}"
+      }
+    },
+    "reviewPlan": {
+      "agent": "reviewAndRefineAgent",
+      "inputs": {
+        "parsedVacationDetails": "{{planGoals}}",
+        "destinationResults": "{{researchDestinations}}",
+        "accommodationsResults": "{{findAccommodations}}",
+        "transportResults": "{{findTransportation}}",
+        "activitiesResults": "{{planActivities}}",
+        "diningResults": "{{planDining}}",
+        "budgetSummary": "{{createBudget}}",
+        "itineraryResults": "{{createItinerary}}"
+      }
+    }
+      },
+      "workflow": [
+        "planGoals",
+        "suggestDestinations",
+        "researchDestinations",
+        "findAccommodations",
+        "findTransportation",
+        "planActivities",
+        "planDining",
+        "createBudget",
+        "createItinerary",
+        "reviewPlan"
+      ]
+    }
+  },
+  "brief": {
+    "st-pete-clearwater-trip-001": {
+      "numTravelers": 2,
+      "ageRange": "30s-40s",
+      "sharedInterests": [
+        "Yoga",
+        "whole foods",
+        "sightseeing",
+        "beaches",
+        "St. Petersburg's vibrant arts scene (murals)",
+        "Nature/Botanical gardens",
+        "Beach culture",
+        "Farmers markets",
+        "Cooking local healthy food"
+      ],
+      "dietaryRestrictions": "None specified, but interested in 'whole foods'",
+      "mobilityConcerns": "None",
+      "timeOfYear": "Aug 10-15, 2025",
+      "tripDuration": "5 days",
+      "travelDistance": "Short-haul",
+      "destinationIdeas": [
+        "St. Petersburg/Clearwater, Florida"
+      ],
+      "totalBudget": "2400",
+      "flightPref": "Unspecified, but budget-friendly",
+      "accommodationPref": "Airbnb with kitchen, quiet",
+      "foodPref": "Local, whole foods, cooking some meals",
+      "activityPref": "Yoga, beaches, sightseeing, museums (Dali), parks, markets",
+      "accommodationType": "Airbnb",
+      "accommodationFeature": "Kitchen, quiet",
+      "numRooms": 1,
+      "tripPace": "Relaxed",
+      "tripPurpose": "Relaxation and Wellness Coastal Trip",
+      "freeTime": "Prioritize early mornings/late afternoons for outdoor activities",
+      "mustHaves": [
+        "Beaches",
+        "quiet lodging",
+        "kitchen for cooking"
+      ],
+      "dealBreakers": [
+        "Noisy areas"
+      ],
+      "flightPreferences": "Budget-friendly",
+      "accommodationBudgetPreference": "Budget-friendly",
+      "foodPreferences": "Local, whole foods, budget-friendly",
+      "activityPreferences": "Free/low-cost activities",
+      "departureLocation": "Philadelphia, PA"
+    }
+  }
+}
